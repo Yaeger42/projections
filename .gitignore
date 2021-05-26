@@ -1,0 +1,6 @@
+__pycache__
+.vscode
+env
+mysqldata
+AppforCovid19Beds.png
+docker-compose.yml
