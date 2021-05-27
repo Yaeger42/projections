@@ -1,9 +1,11 @@
 from fastapi import FastAPI, HTTPException
 from pony.orm import *
 from pydantic import BaseModel
+import os
 
 db = Database()
-db.bind(provider='mysql', host='127.0.0.1', user='root', passwd='samplepassword', db='week5')
+db.bind(provider='mysql', host=os.environ['mysqlhost'], user=os.environ['mysqluser'], 
+passwd=os.environ['mysqlpassword'], db=os.environ['mysqldatabase'])
 
 class Covid(db.Entity):
 	CountryCodeId = Required(str)
