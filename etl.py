@@ -1,4 +1,3 @@
-import json
 from pony.orm import *
 import requests
 
