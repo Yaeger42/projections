@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 from pony.orm import *
 from pydantic import BaseModel
 import os
+import uvicorn
 
 db = Database()
 db.bind(provider='mysql', host=os.environ['mysqlhost'], user=os.environ['mysqluser'], 
@@ -42,3 +43,6 @@ def get_one_country(country_code: str, date: str):
         response['Date'] = i.creationDate
     return response
     
+
+if __name__ == '__main__':
+    uvicorn.run(app, host='0.0.0.0', port=8000)
