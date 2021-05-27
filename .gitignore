@@ -4,3 +4,4 @@ env
 mysqldata
 AppforCovid19Beds.png
 docker-compose.yml
+.pytest_cache
