@@ -1,1 +1,1 @@
-worker: hypercorn main:app --bind 0.0.0.0
+web: gunicorn main:app --preload
