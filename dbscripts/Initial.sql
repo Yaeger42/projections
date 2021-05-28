@@ -16,9 +16,9 @@ USE week5 ;
 -- -----------------------------------------------------
 -- Table week5.CountriesCodes
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS week5.CountriesCodes ;
+DROP TABLE IF EXISTS week5.countriesCodes ;
 
-CREATE TABLE IF NOT EXISTS week5.CountriesCodes (
+CREATE TABLE IF NOT EXISTS week5.countriesCodes (
   Id VARCHAR(5) NOT NULL,
   PRIMARY KEY (Id),
   UNIQUE INDEX Id_UNIQUE (Id ASC) VISIBLE)
@@ -28,9 +28,9 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table week5.CountriesNames
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS week5.CountriesNames ;
+DROP TABLE IF EXISTS week5.countriesNames ;
 
-CREATE TABLE IF NOT EXISTS week5.CountriesNames (
+CREATE TABLE IF NOT EXISTS week5.countriesNames (
   Id INT NOT NULL AUTO_INCREMENT,
   Name VARCHAR(30) NOT NULL,
   CountryCodeId VARCHAR(45) NULL,
@@ -44,13 +44,34 @@ CREATE TABLE IF NOT EXISTS week5.CountriesNames (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
+-- -----------------------------------------------------
+-- Table week5.Population
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS week5.population;
+
+CREATE TABLE IF NOT EXISTS week5.population(
+  Id INT NOT NULL AUTO_INCREMENT,
+  CountryCodeId VARCHAR(45) NOT NULL,
+  TotalPopulation BIGINT, 
+  PRIMARY KEY(Id),
+  UNIQUE INDEX Id_population_unique (Id ASC) VISIBLE,
+  INDEX CountryCodeId_idx (CountryCodeId ASC) VISIBLE,
+  CONSTRAINT CountryCodeId
+    FOREIGN KEY (CountryCodeId)
+    REFERENCES week5.countriesCodes (Id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
+)
+
+
+
 
 -- -----------------------------------------------------
 -- Table week5.Covid
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS week5.Covid ;
+DROP TABLE IF EXISTS week5.covid ;
 
-CREATE TABLE IF NOT EXISTS week5.Covid (
+CREATE TABLE IF NOT EXISTS week5.covid (
   Id INT NOT NULL AUTO_INCREMENT,
   CountryCodeId VARCHAR(5) NULL,
   Confirmed DOUBLE NULL,

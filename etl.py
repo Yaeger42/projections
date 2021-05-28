@@ -1,19 +1,23 @@
 from pony.orm import *
 import requests
 
-request = requests.get('https://covidtrackerapi.bsg.ox.ac.uk/api/v2/stringency/date-range/2019-01-01/2021-05-26')
-data = request.json()
+#request = requests.get('https://covidtrackerapi.bsg.ox.ac.uk/api/v2/stringency/date-range/2019-01-01/2021-05-26')
+#data = request.json()
 
 # Database connection
 db = Database()
-db.bind(provider='mysql', host='127.0.0.1', user='root', passwd='samplepassword', db='week5')
+db.bind(provider='mysql', host='localhost', user='root', passwd='samplepassword', db='week5')
 
 # Making the main entity to be able to insert into week5.covid
 class Covid(db.Entity):
 	CountryCodeId = Required(str)
 	confirmed = Required(int)
 	deaths = Required(int)
-	creationDate = Required(str)
+	CreationDate = Required(str)
+
+class CountriesNames(db.Entity):
+	Name = Required(str)
+	CountryCodeId = Required(str)
 
 # Create tables set to false because no table creation is needed, the schema is built already
 db.generate_mapping(create_tables=False)
@@ -27,4 +31,4 @@ def insert_data(data):
 			c = Covid(CountryCodeId = key, confirmed=value['confirmed'], deaths=value['deaths'], creationDate=value['date_value'])
 
 # Main runner
-insert_data(data)
+# insert_data(data)

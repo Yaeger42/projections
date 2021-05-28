@@ -13,6 +13,11 @@ class Covid(db.Entity):
 	deaths = Required(int)
 	creationDate = Required(str)
 
+class CountriesNames(db.Entity):
+	Name = Required(str)
+	CountryCodeId = Required(str)
+
+
 db.generate_mapping(create_tables=False)
 
 
@@ -41,3 +46,48 @@ def get_one_country(country_code: str, date: str):
         response['Deaths'] = i.deaths
         response['Date'] = i.creationDate
     return response
+
+
+@app.get('/getAllCountries')
+@db_session
+def get_countries():
+    query = select(c for c in CountriesNames)
+    json_response = []
+    for i in query:
+	    obj = {}
+	    obj['CountryName'] = i.Name
+	    json_response.append(obj)
+    return json_response
+
+
+@app.get('/getCountryCode/{country_name}')
+@db_session
+def get_country_code(country_name: str):
+    query = CountriesNames.select(lambda c: c.Name == country_name)
+    if not query:
+        raise HTTPException(status_code=404, detail="The country code and/or date didn't return any results")
+    response = {}
+    for i in query:
+        response['CountryCode'] = i.CountryCodeId
+        response['CountryName'] = i.Name
+    return response
+
+
+@app.get('/getMaxDeaths-Per-country/{country_code}')
+@db_session
+def get_countries(country_code: str):
+	q = db.select("""SELECT
+       						MAX(c.creationDate),
+       						cN.Name,
+       						MAX(c.Deaths)
+						FROM
+     						covid c
+						JOIN countriesnames cN on c.CountryCodeId = cN.CountryCodeId
+						WHERE cN.CountryCodeId = $country_code;""")
+	response_object = {}
+	for date, country, deaths in q:
+		response_object['Country'] = country
+		response_object['Deaths'] = deaths
+		response_object['Date'] = date
+
+	return response_object
