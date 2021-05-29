@@ -22,4 +22,4 @@ On the root folder run the ```etl.py``` with ```(env)$ python3 etl.py``` and wai
 On the root folder run: ```(env)$ uvicorn main:app --reload``` 
 
 ### Querying the API
--- TODO
+To see the list of available queries to the api you can either go to the ```main.py``` file or run the server and go to: ```localhost:8000/docs```, in this last one you'll find the interactive swagger API documentation 
