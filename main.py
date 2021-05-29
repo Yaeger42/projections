@@ -76,6 +76,7 @@ def get_country_code(country_name: str):
 @app.get('/getMaxDeaths-Per-country/{country_code}')
 @db_session
 def get_countries(country_code: str):
+    country_code.upper()
     q = db.select("""SELECT
     MAX(c.creationDate),
     cN.Name,
@@ -84,7 +85,7 @@ def get_countries(country_code: str):
     covid c
 	JOIN countriesnames cN on c.CountryCodeId = cN.CountryCodeId
 	WHERE cN.CountryCodeId = $country_code;""")
-    if q is not None:
+    if q is None:
        raise HTTPException(status_code=404, detail="The country code and/or date didn't return any results")
      
     response_object = {}
