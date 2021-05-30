@@ -6,14 +6,16 @@ import os
 from starlette.responses import Response
 
 db = Database()
-db.bind(provider='mysql', host=os.environ['mysqlhost'], user=os.environ['mysqluser'], 
+db.bind(provider='mysql', host=os.environ['mysqlhost'], user=os.environ['mysqluser'],
 passwd=os.environ['mysqlpassword'], db=os.environ['mysqldatabase'])
+
 
 class Covid(db.Entity):
 	CountryCodeId = Required(str)
 	confirmed = Required(int)
 	deaths = Required(int)
 	creationDate = Required(str)
+
 
 class CountriesNames(db.Entity):
 	Name = Required(str)
@@ -24,9 +26,11 @@ db.generate_mapping(create_tables=False)
 
 
 app = FastAPI()
+
+
 class CovidModel(BaseModel):
-    CountryCodeId:str
-    confirmed:int
+    CountryCodeId: str
+    confirmed: int
 
 
 @app.get('/')
@@ -38,9 +42,11 @@ async def root():
 @db_session
 def get_one_country(country_code: str, date: str):
     response = {}
-    query = Covid.select(lambda c: c.CountryCodeId == country_code and c.creationDate == date)
+    query = Covid.select(lambda c: c.CountryCodeId ==
+                         country_code and c.creationDate == date)
     if not query:
-        raise HTTPException(status_code=404, detail="The country code and/or date didn't return any results")
+        raise HTTPException(
+            status_code=404, detail="The country code and/or date didn't return any results")
     for i in query:
         print(i.CountryCodeId)
         response['CountryCodeId'] = i.CountryCodeId
@@ -50,15 +56,17 @@ def get_one_country(country_code: str, date: str):
     return response
 
 
+
 @app.get('/getAllCountries')
 @db_session
 def get_countries():
     query = select(c for c in CountriesNames)
     json_response = []
     for i in query:
-	    obj = {}
-	    obj['CountryName'] = i.Name
-	    json_response.append(obj)
+        obj = {}
+        obj['CountryName'] = i.Name
+        obj['CountryCodeId'] = i.CountryCodeId
+        json_response.append(obj)
     return json_response
 
 
@@ -118,7 +126,7 @@ def get_death_ratio(country_code: str):
 
     if q is None:
         raise HTTPException(status_code=404, detail="The country code and/or date didn't return any results")
-        
+
     response_object = {}
     for date, country, deaths, totalPopulation, ratio_per_100_000, total_ratio in q:
         response_object['Country'] = country
