@@ -3,8 +3,6 @@ from pony.orm import *
 from pydantic import BaseModel
 import os
 
-from starlette.responses import Response
-
 db = Database()
 db.bind(provider='mysql', host=os.environ['mysqlhost'], user=os.environ['mysqluser'],
 passwd=os.environ['mysqlpassword'], db=os.environ['mysqldatabase'])
