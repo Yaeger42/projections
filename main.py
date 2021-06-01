@@ -2,6 +2,11 @@ from fastapi import FastAPI, HTTPException
 from pony.orm import *
 from pydantic import BaseModel
 import os
+import pandas as pd
+import matplotlib.pyplot as plt
+import warnings
+from sklearn.ensemble import RandomForestRegressor
+from skforecast.ForecasterAutoreg import ForecasterAutoreg
 
 db = Database()
 db.bind(provider='mysql', host=os.environ['mysqlhost'], user=os.environ['mysqluser'],
@@ -135,3 +140,25 @@ def get_death_ratio(country_code: str):
         response_object['Date'] = date
 
     return response_object
+
+# @app.get('/getPredictions/{country_name}/{month_in_days}')
+# def predictions_data_model(country_name: str = None, days: int = 90, ):
+#     dir_path = os.path.dirname(os.path.realpath(__file__)) 
+#     df = pd.read_csv(f'{dir_path}/data/{country_name.capitalize()}.csv', sep=',').all()
+#     if not df:
+#         return {"message": "The provided country was not found"}
+#     df['CreationDate'] = pd.to_datetime(df['CreationDate'], format='%Y/%m/%d')
+#     df = df.set_index('CreationDate')
+#     df = df.drop('Name', axis=1)
+#     df = df.asfreq('D')
+#     df = df.sort_index()
+#     if days != 90 or days != 180 or days != 270:
+#         return {"message": "The number of days should be equal to 90, 180 or 270 days"}
+#     df_train = df[:-days]
+#     df_test = df[-days:]
+#     forecaster_rf = ForecasterAutoreg(regressor=RandomForestRegressor(random_state=123), lags=6)
+#     forecaster_rf.fit(y=df_train.values.flatten())
+#     steps_rf = days
+#     predictions = forecaster_rf.predict(steps=steps_rf)
+#     predictions = pd.Series(data=predictions, index=df_test.index)
+#     return predictions.to_json(orient='table', indent=4)
