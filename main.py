@@ -5,8 +5,9 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 import warnings
-from sklearn.ensemble import RandomForestRegressor
 from skforecast.ForecasterAutoreg import ForecasterAutoreg
+from sklearn.linear_model import Lasso
+
 
 db = Database()
 db.bind(provider='mysql', host=os.environ['mysqlhost'], user=os.environ['mysqluser'],
@@ -85,7 +86,7 @@ def get_country_code(country_name: str):
         response['CountryName'] = i.Name
     return response
 
-
+# 
 @app.get('/getMaxDeathsPercountry/{country_code}')
 @db_session
 def get_countries(country_code: str):
@@ -109,7 +110,7 @@ def get_countries(country_code: str):
 
     return response_object
 
-
+# Change dates
 @app.get('/getDeathsRatioPerCountry/{country_code}')
 @db_session
 def get_death_ratio(country_code: str):
@@ -154,11 +155,14 @@ def predictions_data_model(country_name: str = None, days: int = 90, ):
     df = df.sort_index()
     if days != 90 and days != 180 and days != 270:
         return {"message": "The number of days should be equal to 90, 180 or 270 days"}
-    df_train = df[:-days]
-    df_test = df[-days:]
-    forecaster_rf = ForecasterAutoreg(regressor=RandomForestRegressor(random_state=123), lags=6)
-    forecaster_rf.fit(y=df_train.values.flatten())
-    steps_rf = days
-    predictions = forecaster_rf.predict(steps=steps_rf)
-    predictions = pd.Series(data=predictions, index=df_test.index)
-    return predictions.to_json(orient='table', indent=4)
+    try:
+        df_train = df[:-days]
+        df_test = df[-days:]
+        forecaster_rf = ForecasterAutoreg(regressor=Lasso(), lags=100)
+        forecaster_rf.fit(y=df_train.values.flatten())
+        steps_rf = days
+        predictions = forecaster_rf.predict(steps=steps_rf)
+        predictions = pd.Series(data=predictions, index=df_test.index)
+        return predictions.to_json(orient='table', indent=4)
+    except IndexError:
+        return {'message': "There is not enough data to predict that far away"}
