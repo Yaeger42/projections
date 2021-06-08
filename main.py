@@ -162,13 +162,15 @@ def predictions_data_model(country_name: str = None, days: int = 90, ):
     if days != 90 and days != 180 and days != 270:
         return {"message": "The number of days should be equal to 90, 180 or 270 days"}
     try:
-        df_train = df[:-days]
-        df_test = df[-days:]
+        df_train = df
+        # df_test = df[-days:]
         forecaster_rf = ForecasterAutoreg(regressor=Lasso(), lags=100)
         forecaster_rf.fit(y=df_train.values.flatten())
         steps_rf = days
         predictions = forecaster_rf.predict(steps=steps_rf)
-        predictions = pd.Series(data=predictions, index=df_test.index)
+        predictions = pd.Series(data=predictions, 
+                        index=pd.date_range(start = df.index[df.shape[0]-1]+ pd.DateOffset(1), 
+                                            periods = steps_rf).to_pydatetime().tolist())
         return predictions.to_json(orient='table', indent=4)
     except IndexError:
         return {'message': "There is not enough data to predict that far away"}
