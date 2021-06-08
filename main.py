@@ -1,10 +1,9 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pony.orm import *
 from pydantic import BaseModel
 import os
 import pandas as pd
-import matplotlib.pyplot as plt
-import warnings
 from skforecast.ForecasterAutoreg import ForecasterAutoreg
 from sklearn.linear_model import Lasso
 
@@ -30,7 +29,14 @@ db.generate_mapping(create_tables=False)
 
 
 app = FastAPI()
+origins = ['*']
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_methods=['GET'],
+    allow_headers=['*']
+)
 
 class CovidModel(BaseModel):
     CountryCodeId: str
