@@ -174,3 +174,4 @@ def predictions_data_model(country_name: str = None, days: int = 90, ):
         return predictions.to_json(orient='table', indent=4)
     except IndexError:
         return {'message': "There is not enough data to predict that far away"}
+#comment 
