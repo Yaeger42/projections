@@ -1,3 +1,6 @@
+# Projections
+This is a project that uses a projection model to forecast Covid19 deaths with data from 2019 and is able to forecast the data for either 3, 6 and 12 months in the future. It relies on Python and FastAPI for it
+
 # How to run the project locally
 ## Requirements
 Given the fact that this project relies on a mySQL database you are going to need one, either via docker or an actual instance.
